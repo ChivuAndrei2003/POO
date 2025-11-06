@@ -3,4 +3,4 @@
 .vscode
 README2.md
 .teorie/*.cpp
-
+.DS_Store

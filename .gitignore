@@ -1,0 +1,6 @@
+*.idea
+.run
+.vscode
+README2.md
+.teorie/*.cpp
+

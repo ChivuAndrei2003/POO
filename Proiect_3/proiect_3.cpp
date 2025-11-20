@@ -19,15 +19,15 @@ private:
 	string origine;
 	static int totalSortimente;
 	const string brand = "Cafenea Aroma";
-	float *scorAromatica;
+	float *scorIntensitate;
 	int codProdus;
 
 public:
-	Cafea() : scorAromatica(nullptr)
+	Cafea() : scorIntensitate(nullptr)
 	{
 		origine = "Etiopia";
 		codProdus = 100;
-		scorAromatica = new float(8.5f);
+		scorIntensitate = new float(8.5f);
 		totalSortimente++;
 	}
 
@@ -35,7 +35,7 @@ public:
 	{
 		origine = origineNoua;
 		codProdus = codNou;
-		scorAromatica = new float(7.0f);
+		scorIntensitate = new float(7.0f);
 		totalSortimente++;
 	}
 
@@ -43,7 +43,7 @@ public:
 	{
 		origine = origineNoua;
 		codProdus = codNou;
-		scorAromatica = new float(scor);
+		scorIntensitate = new float(scor);
 		totalSortimente++;
 	}
 
@@ -62,13 +62,13 @@ public:
 		this->origine = cafea.origine;
 		this->codProdus = cafea.codProdus;
 
-		if (cafea.scorAromatica != nullptr)
+		if (cafea.scorIntensitate != nullptr)
 		{
-			this->scorAromatica = new float(*cafea.scorAromatica);
+			this->scorIntensitate = new float(*cafea.scorIntensitate);
 		}
 		else
 		{
-			this->scorAromatica = nullptr;
+			this->scorIntensitate = nullptr;
 		}
 
 		totalSortimente++;
@@ -76,15 +76,15 @@ public:
 
 	~Cafea()
 	{
-		if (scorAromatica != nullptr)
+		if (scorIntensitate != nullptr)
 		{
-			delete scorAromatica;
+			delete scorIntensitate;
 		}
 		totalSortimente--;
 	}
 
 	// Getteri
-	string getOrigine()
+	string getOrigine() const
 	{
 		return this->origine;
 	}
@@ -93,11 +93,11 @@ public:
 		return this->codProdus;
 	}
 
-	float getScorAromatica()
+	float getScorIntensitate() const
 	{
-		if (this->scorAromatica != nullptr)
+		if (this->scorIntensitate != nullptr)
 		{
-			return *this->scorAromatica;
+			return *this->scorIntensitate;
 		}
 		return 0.0f;
 	}
@@ -121,17 +121,17 @@ public:
 		this->codProdus = cod;
 	}
 
-	void setScorAromatica(float scor)
+	void setscorIntensitate(float scor)
 	{
 		if (scor > 0)
 		{
-			if (this->scorAromatica != nullptr)
+			if (this->scorIntensitate != nullptr)
 			{
-				*this->scorAromatica = scor;
+				*this->scorIntensitate = scor;
 			}
 			else
 			{
-				this->scorAromatica = new float(scor);
+				this->scorIntensitate = new float(scor);
 			}
 		}
 	}
@@ -148,6 +148,65 @@ public:
 
 	friend float calculeazaCostComanda(const Cafea &cafea, const Angajat &angajat, int grame);
 	friend bool verificaCompatibilitateEspressor(const Espressor &espressor, const Cafea &cafea);
+
+	Cafea operator=(const Cafea &cafea)
+	{
+
+		if (this != &cafea)
+		{
+			this->origine = cafea.origine;
+			this->codProdus = cafea.codProdus;
+		}
+		if (this->scorIntensitate != nullptr)
+		{
+			delete this->scorIntensitate;
+		}
+		else if (cafea.scorIntensitate != nullptr)
+		{
+			this->scorIntensitate = new float(*cafea.scorIntensitate);
+		}
+		else
+		{
+			this->scorIntensitate = nullptr;
+		}
+		return *this;
+	}
+
+	friend ostream &operator<<(ostream &afiseaza, const Cafea &c)
+	{
+		return afiseaza << "Cafeaua provine din " << c.getOrigine() << " , " << "are "
+						<< c.getTotalSortimente() << " sortimente " << " si un scor de intesitate de " << c.getScorIntensitate();
+	}
+
+	friend istream &operator>>(istream &citeste, Cafea &cafea)
+	{
+		cout << "Origine cafea: ";
+		citeste >> cafea.origine;
+		cout << "Cod produs :";
+		citeste >> cafea.codProdus;
+
+		float scor;
+		cout << "Scor intensitate: ";
+		citeste >> scor;
+
+		if (cafea.scorIntensitate != nullptr)
+		{
+			*cafea.scorIntensitate = scor;
+		}
+		else
+		{
+			cafea.scorIntensitate = new float(scor);
+		}
+
+		return citeste;
+	}
+
+	Cafea &operator++()
+	{
+		this->totalSortimente++;
+
+		return *this;
+	}
 };
 
 int Cafea::totalSortimente = 0;
@@ -278,14 +337,13 @@ public:
 		salariu = Salariu;
 	}
 	// Operator de atribuire
-	Angajat& operator=(const Angajat& copie)
+	Angajat &operator=(const Angajat &copie)
 	{
-		if (this != &copie)  
+		if (this != &copie)
 		{
 			this->nume = copie.nume;
 			this->idAngajat = copie.idAngajat;
 
-			
 			if (this->orePeSaptamana != nullptr)
 			{
 				delete this->orePeSaptamana;
@@ -299,14 +357,36 @@ public:
 			{
 				this->orePeSaptamana = nullptr;
 			}
-
-			
 		}
 		return *this;
 	}
 
 	friend float calculeazaPlataPeOra(const Angajat &angajat);
 	friend float calculeazaCostComanda(const Cafea &cafea, const Angajat &angajat, int grame);
+	/*string nume;
+	static int salariu;
+	const string locatie = "Bucuresti";
+	double *orePeSaptamana;
+	int idAngajat;*/
+	Angajat operator+(int increment)
+	{
+		Angajat copie = *this;
+		copie.idAngajat += increment; // creste salariul
+		return copie;
+	}
+
+	Angajat operator!()
+	{
+		Angajat copie = *this;
+		copie.idAngajat = -copie.idAngajat;
+		return copie;
+	}
+	// operator dereferentiere :
+	Angajat &operator*()
+	{
+
+		return *this;
+	}
 };
 
 int Angajat::salariu = 3000;
@@ -449,6 +529,55 @@ public:
 	}
 
 	friend bool verificaCompatibilitateEspressor(const Espressor &espressor, const Cafea &cafea);
+
+	Espressor &operator=(const Espressor &copie)
+	{
+		if (this != &copie)
+		{
+			this->marca = copie.marca;
+			this->tensiuneStandard = copie.tensiuneStandard;
+			if (this->cicluriService != nullptr)
+			{
+				delete this->cicluriService;
+			}
+			if (copie.cicluriService != nullptr)
+			{
+				this->cicluriService = new int(*copie.cicluriService);
+			}
+			else
+			{
+				this->cicluriService = nullptr;
+			}
+		}
+		return *this;
+	}
+
+	Espressor &operator*=(int factor)
+	{
+		if (this->cicluriService != nullptr)
+		{
+			*this->cicluriService *= factor;
+		}
+		return *this;
+	}
+
+	Espressor &operator+=(int cicluri)
+	{
+		if (this->cicluriService != nullptr)
+		{
+			*this->cicluriService += cicluri;
+		}
+		return *this;
+	}
+
+	Espressor &operator--()
+	{
+		if (this->cicluriService != nullptr && *this->cicluriService > 0)
+		{
+			(*this->cicluriService)--;
+		}
+		return *this;
+	}
 };
 int Espressor::totalEspresoareActive = 0;
 
@@ -475,12 +604,12 @@ float calculeazaPlataPeOra(const Angajat &angajat)
 
 float calculeazaCostComanda(const Cafea &cafea, const Angajat &angajat, int grame)
 {
-	if (cafea.scorAromatica == nullptr || grame <= 0)
+	if (cafea.scorIntensitate == nullptr || grame <= 0)
 	{
 		return 0.0f;
 	}
 
-	float pretCafea = *cafea.scorAromatica * grame * 0.5;
+	float pretCafea = *cafea.scorIntensitate * grame * 0.5;
 	float comision = *angajat.orePeSaptamana * 0.1;
 
 	cout << "Comanda procesata de: " << angajat.nume << endl;
@@ -492,14 +621,14 @@ float calculeazaCostComanda(const Cafea &cafea, const Angajat &angajat, int gram
 
 bool verificaCompatibilitateEspressor(const Espressor &espressor, const Cafea &cafea)
 {
-	if (cafea.scorAromatica == nullptr || espressor.cicluriService == nullptr)
+	if (cafea.scorIntensitate == nullptr || espressor.cicluriService == nullptr)
 	{
 		return false;
 	}
 
 	bool compatibil = true;
 
-	if (*cafea.scorAromatica > 9.0 && espressor.tensiuneStandard < 240)
+	if (*cafea.scorIntensitate > 9.0 && espressor.tensiuneStandard < 240)
 	{
 		compatibil = false;
 		cout << "Atentie: Cafea premium din " << cafea.origine
@@ -508,7 +637,7 @@ bool verificaCompatibilitateEspressor(const Espressor &espressor, const Cafea &c
 
 	if (*espressor.cicluriService > 500)
 	{
-		cout << "Atentie: Espressorul " << espressor.marca << " necesita service urgent!" << endl;
+		cout << "Atentie: Espressorul " << espressor.marca << " necesita service urgent!!" << endl;
 	}
 
 	cout << "Testare: " << espressor.marca << " cu cafea din " << cafea.origine << endl;
@@ -519,6 +648,32 @@ bool verificaCompatibilitateEspressor(const Espressor &espressor, const Cafea &c
 
 int main()
 {
+	// TESTARE OPERATORI
+
+	Cafea c1("Columbia", 101, 8.0f);
+	Cafea c2;
+	c2 = c1;
+	cout << c1 << endl;
+	++c1;
+
+	Angajat a1("Andrei", 201, 42.0);
+	Angajat a2;
+	a2 = a1;
+	Angajat a3 = a1 + 50;
+	Angajat a4 = !a1;
+	Angajat &refA = *a1;
+
+	Espressor e1("De'Longhi", 240, 100);
+	Espressor e2;
+	e2 = e1;
+	e1 += 10;
+	e1 *= 2;
+	--e1;
+
+	//  friend func.
+	calculeazaPlataPeOra(a1);
+	calculeazaCostComanda(c1, a1, 250);
+	verificaCompatibilitateEspressor(e1, c1);
 
 	return 0;
 }

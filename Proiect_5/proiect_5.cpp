@@ -11,7 +11,7 @@ using namespace std;
 class Cafea;
 class Angajat;
 class Espressor;
-
+class Cafenea;
 class Cafea
 {
 
@@ -703,6 +703,17 @@ bool verificaCompatibilitateEspressor(const Espressor &espressor, const Cafea &c
 
     return compatibil;
 }
+
+class Cafenea
+{
+private:
+    Angajat barista;
+    int nrAngajati;
+    string adresaCafenea;
+
+public:
+    Cafenea() : nrAngajati(10), adresaCafenea("Str. Lalelelor"),barista() {}
+};
 
 int main()
 {

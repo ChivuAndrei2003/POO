@@ -12,6 +12,7 @@ class Cafea;
 class Angajat;
 class Espressor;
 class Cafenea;
+
 class Cafea
 {
 
@@ -214,7 +215,7 @@ int Cafea::totalSortimente = 0;
 class Angajat
 {
 
-private:
+protected:
     string nume;
     static int salariu;
     const string locatie = "Bucuresti";
@@ -709,14 +710,97 @@ class Cafenea
 private:
     Angajat barista;
     int nrAngajati;
-    string adresaCafenea;
+    char *adresaCafenea;
 
 public:
-    Cafenea() : nrAngajati(10), adresaCafenea("Str. Lalelelor"),barista() {}
+    Cafenea() : nrAngajati(10), adresaCafenea(nullptr), barista() {}
+
+    Cafenea(int nrAngajati, const char *adresa, Angajat b) : barista(b)
+    {
+        this->nrAngajati = nrAngajati;
+
+        if (adresa != nullptr)
+        {
+            this->adresaCafenea = new char[strlen(adresa) + 1];
+            strcpy(this->adresaCafenea, adresa);
+        }
+        else
+        {
+            adresaCafenea = nullptr;
+        }
+    }
+    int getNrAngajati()
+    {
+        return nrAngajati;
+    }
+    void setNrAngajati(int numarAngajati)
+    {
+        this->nrAngajati = numarAngajati;
+    }
+
+    char *getAdresaCafenea()
+    {
+        return this->adresaCafenea;
+    }
+
+    void setAdresaCafenea(const char *adresa)
+    {
+        if (strlen(adresa) > 0)
+        {
+            if (this->adresaCafenea != nullptr)
+            {
+                delete[] this->adresaCafenea;
+            }
+            this->adresaCafenea = new char[strlen(adresa) + 1];
+            strcpy(this->adresaCafenea, adresa);
+        }
+    }
+    Angajat getBarista()
+    {
+        return barista;
+    }
+
+    Angajat setBarista(const Angajat &a)
+    {
+        barista = a;
+    }
+
+    // todo : constructor copiere si 3 operatori
+    Cafenea(const Cafenea &c) : barista(c.barista)
+    {
+        this->nrAngajati = c.nrAngajati;
+        this->barista = c.barista;
+
+        if (c.adresaCafenea != 0)
+        {
+            this->adresaCafenea = new char[strlen(c.adresaCafenea) + 1];
+            strcpy(this->adresaCafenea, c.adresaCafenea);
+        }
+        else
+        {
+            this->adresaCafenea = nullptr;
+        }
+    }
+
+    ~Cafenea()
+    {
+        if (this->adresaCafenea != nullptr)
+        {
+            delete[] this->adresaCafenea;
+        }
+    }
+    
+   Cafenea operator+(int valoare){
+       Cafenea aux = *this;
+       aux.nrAngajati = this->nrAngajati + valoare;
+       return aux;
+   }
+   friend Cafenea operator+(int valoare, Cafenea);
 };
 
 int main()
 {
+    Cafenea c;
 
     return 0;
 }

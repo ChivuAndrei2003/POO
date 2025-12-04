@@ -760,7 +760,7 @@ public:
         return barista;
     }
 
-    Angajat setBarista(const Angajat &a)
+    void setBarista(const Angajat &a)
     {
         barista = a;
     }
@@ -789,13 +789,48 @@ public:
             delete[] this->adresaCafenea;
         }
     }
-    
-   Cafenea operator+(int valoare){
-       Cafenea aux = *this;
-       aux.nrAngajati = this->nrAngajati + valoare;
-       return aux;
-   }
-   friend Cafenea operator+(int valoare, Cafenea);
+    Cafenea operator+(int valoare)
+    {
+        Cafenea copie = *this;
+        copie.nrAngajati += valoare;
+        return copie;
+    }
+
+    Cafenea &operator=(const Cafenea &c)
+    {
+        if (this != &c)
+        {
+            this->nrAngajati = c.nrAngajati;
+            this->barista = c.barista;
+
+            if (this->adresaCafenea != nullptr)
+            {
+                delete[] this->adresaCafenea;
+            }
+
+            if (c.adresaCafenea != nullptr)
+            {
+                this->adresaCafenea = new char[strlen(c.adresaCafenea) + 1];
+                strcpy(this->adresaCafenea, c.adresaCafenea);
+            }
+            else
+            {
+                this->adresaCafenea = nullptr;
+            }
+        }
+        return *this;
+    }
+
+    friend ostream &operator<<(ostream &out, const Cafenea &c)
+    {
+        out << "Cafenea cu " << c.nrAngajati << " angajati";
+        if (c.adresaCafenea != nullptr)
+        {
+            out << ", adresa: " << c.adresaCafenea;
+        }
+        out << ", barista: " << c.barista.getNume();
+        return out;
+    }
 };
 
 int main()
